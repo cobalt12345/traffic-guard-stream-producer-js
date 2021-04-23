@@ -4,6 +4,9 @@
 out/
 .idea/
 .idea_modules/
+node_modules/
+package-lock.json
+src/bundle**
 *.iml
 *.ipr
 *.iws

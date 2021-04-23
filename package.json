@@ -1,0 +1,19 @@
+{
+  "name": "TrafficGuardStreamProducerJS",
+  "description": "A JavaScript strem producer for KVS.",
+  "version": "1.0.0",
+  "author": "Denis Talochkin",
+  "main": "StreamProducer.js",
+  "scripts": {
+    "build": "webpack ./src/StreamProducer.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.13.1"
+  },
+  "devDependencies": {
+    "@aws-sdk/types": "^3.13.1",
+    "path-browserify": "^1.0.1",
+    "webpack": "^5.35.0",
+    "webpack-cli": "^4.6.0"
+  }
+}
