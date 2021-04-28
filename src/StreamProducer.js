@@ -6,10 +6,10 @@
 
 const REGION = 'eu-central-1';
 const IDENTITY_POOL_ID = 'eu-central-1:25035041-4088-45af-80da-abdaf28f521b';
-const KWS_NAME = 'traffic-guard';
+const KVS_NAME = 'traffic-guard';
 const isInProduction = false;
 const DATA_ENDPOINT = `https://wiexpnf9wf.execute-api.eu-central-1.amazonaws.com/${isInProduction ? 'Prod' 
-    : 'Stage'}/process-webcam-stream/${KWS_NAME}/`;
+    : 'Stage'}/process-webcam-stream/${KVS_NAME}/`;
 
 const webcamConfig = {
     /*
