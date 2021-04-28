@@ -7,7 +7,46 @@
 const REGION = 'eu-central-1';
 const IDENTITY_POOL_ID = 'eu-central-1:25035041-4088-45af-80da-abdaf28f521b';
 const KWS_NAME = 'traffic-guard';
-const DATA_ENDPOINT = `https://grt9g38s1i.execute-api.eu-central-1.amazonaws.com/Prod/process-webcam-stream/${KWS_NAME}/`;
+const isInProduction = false;
+const DATA_ENDPOINT = `https://wiexpnf9wf.execute-api.eu-central-1.amazonaws.com/${isInProduction ? 'Prod' 
+    : 'Stage'}/process-webcam-stream/${KWS_NAME}/`;
+
+const webcamConfig = {
+    /*
+    Previewer element size
+     */
+    width: 320,
+    height: 240,
+    /*
+    File image size
+     */
+    dest_width: 640,
+    dest_height: 480,
+    /*
+    JPEG
+     */
+    image_format: 'jpeg',
+    /*
+    From 0 to 100
+     */
+    jpeg_quality: 90,
+    /*
+    Try flash if camera is not accessible natively
+     */
+    enable_flash: true,
+    /*
+    Adobe Flash fallback mode
+     */
+    force_flash: false,
+    /*
+    Flip horiz.
+     */
+    flip_horiz: true,
+    fps: 25,
+    unfreeze_snap: true,
+    upload_name: 'webcam'
+};
+
 
 var frameBuffer;
 
@@ -49,8 +88,9 @@ function frameCallback(imgData) {
 function postFrameData(data, endpoint, callback) {
     var $http = new XMLHttpRequest();
     $http.open("POST", endpoint);
-    $http.setRequestHeader("Content-Type", "application/json");
-
+    // $http.setRequestHeader("Content-Type", "application/json");
+    // $http.setRequestHeader("Access-Control-Request-Method", "POST");
+    // $http.setRequestHeader("Access-Control-Request-Headers", "Content-Type");
     $http.send(JSON.stringify(data));
 }
 

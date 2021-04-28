@@ -11,17 +11,7 @@
 <body>
     <div id="webcam-feed-container"></div>
     <script>
-        Webcam.set({
-            width: 320,
-            height: 240,
-            dest_width: 640,
-            dest_height: 480,
-            image_format: 'jpeg',
-            jpeg_quality: 90,
-            force_flash: false,
-            flip_horiz: true,
-            fps: 45
-        });
+        Webcam.set(webcamConfig);
         startStreaming();
     </script>
 </body>
