@@ -88,9 +88,9 @@ function frameCallback(imgData) {
 function postFrameData(data, endpoint, callback) {
     var $http = new XMLHttpRequest();
     $http.open("POST", endpoint);
-    // $http.setRequestHeader("Content-Type", "application/json");
-    // $http.setRequestHeader("Access-Control-Request-Method", "POST");
-    // $http.setRequestHeader("Access-Control-Request-Headers", "Content-Type");
+    $http.setRequestHeader("Content-Type", "application/json");
+    $http.setRequestHeader("Access-Control-Request-Method", "POST");
+    $http.setRequestHeader("Access-Control-Request-Headers", "Content-Type");
     $http.send(JSON.stringify(data));
 }
 
