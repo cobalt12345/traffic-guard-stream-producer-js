@@ -8,8 +8,7 @@ const REGION = 'eu-central-1';
 const IDENTITY_POOL_ID = 'eu-central-1:25035041-4088-45af-80da-abdaf28f521b';
 const KVS_NAME = 'traffic-guard';
 const isInProduction = false;
-const DATA_ENDPOINT = `https://wiexpnf9wf.execute-api.eu-central-1.amazonaws.com/${isInProduction ? 'Prod' 
-    : 'Stage'}/process-webcam-stream/${KVS_NAME}/`;
+const DATA_ENDPOINT = `https://znvljdl845.execute-api.eu-central-1.amazonaws.com/Stage/streams/`;
 
 const webcamConfig = {
     /*
@@ -86,12 +85,37 @@ function frameCallback(imgData) {
 }
 
 function postFrameData(data, endpoint, callback) {
-    var $http = new XMLHttpRequest();
-    $http.open("POST", endpoint);
-    $http.setRequestHeader("Content-Type", "application/json");
-    $http.setRequestHeader("Access-Control-Request-Method", "POST");
-    $http.setRequestHeader("Access-Control-Request-Headers", "Content-Type");
-    $http.send(JSON.stringify(data));
+    // var $http = new XMLHttpRequest();
+    // $http.open("POST", endpoint);
+    // $http.setRequestHeader("Content-Type", "application/json");
+    //
+    // $http.send(JSON.stringify(data));
+    const jsonData = JSON.stringify(data)
+    const authData = {
+        accessKey: '***REMOVED***',
+        secretKey: '***REMOVED***',
+        region: REGION
+    };
+    let apigClient = apigClientFactory.newClient(authData);
+    let params = {
+        headers: {
+            'Access-Control-Request-Method': 'POST',
+            'Access-Control-Request-Headers': 'Content-Type, Accept',
+            'Origin': 'http://localhost:63342/'
+        },
+        queryParams: {}
+    };
+    let body = {
+        jsonData
+    };
+    var additionalParams = {
+
+    };
+    apigClient.streamsPost(params, body, additionalParams).then((result) => {
+        console.log(`Images were sent to the KVS. Result: ${result}`);
+    }).catch((error)=> {
+        console.error(error);
+    })
 }
 
 function stopStreaming() {
