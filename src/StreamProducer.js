@@ -85,37 +85,34 @@ function frameCallback(imgData) {
 }
 
 function postFrameData(data, endpoint, callback) {
-    // var $http = new XMLHttpRequest();
-    // $http.open("POST", endpoint);
-    // $http.setRequestHeader("Content-Type", "application/json");
-    //
-    // $http.send(JSON.stringify(data));
-    const jsonData = JSON.stringify(data)
-    const authData = {
-        accessKey: '***REMOVED***',
-        secretKey: '***REMOVED***',
-        region: REGION
-    };
-    let apigClient = apigClientFactory.newClient(authData);
-    let params = {
-        headers: {
-            'Access-Control-Request-Method': 'POST',
-            'Access-Control-Request-Headers': 'Content-Type, Accept',
-            'Origin': 'http://localhost:63342/'
-        },
-        queryParams: {}
-    };
-    let body = {
-        jsonData
-    };
-    var additionalParams = {
+    var $http = new XMLHttpRequest();
+    $http.open("POST", endpoint);
+    $http.setRequestHeader("Content-Type", "text/plain");
 
-    };
-    apigClient.streamsPost(params, body, additionalParams).then((result) => {
-        console.log(`Images were sent to the KVS. Result: ${result}`);
-    }).catch((error)=> {
-        console.error(error);
-    })
+    $http.send(JSON.stringify(data));
+    // const jsonData = JSON.stringify(data)
+    // const authData = {
+    // };
+    // let apigClient = apigClientFactory.newClient(authData);
+    // let params = {
+    //     headers: {
+    //         'Access-Control-Request-Method': 'POST',
+    //         'Access-Control-Request-Headers': 'Content-Type, Accept',
+    //         'Origin': 'http://localhost:63342/'
+    //     },
+    //     queryParams: {}
+    // };
+    // let body = {
+    //     jsonData
+    // };
+    // var additionalParams = {
+    //
+    // };
+    // apigClient.streamsPost(params, body, additionalParams).then((result) => {
+    //     console.log(`Images were sent to the KVS. Result: ${result}`);
+    // }).catch((error)=> {
+    //     console.error(error);
+    // })
 }
 
 function stopStreaming() {
