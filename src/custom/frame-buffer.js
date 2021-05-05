@@ -6,7 +6,7 @@
 var FrameBuffer = function(params) {
     var that = Object.create(FrameBuffer.prototype);
     
-    var MIN_BUFFER_SIZE = 20;
+    var MIN_BUFFER_SIZE = 1;
     var frameBuffer = [];
     var frameTimestamps = [];
     var bufferSize = Math.max(MIN_BUFFER_SIZE, params.size);

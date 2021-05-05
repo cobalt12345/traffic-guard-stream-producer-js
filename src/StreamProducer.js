@@ -3,12 +3,12 @@
 // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 //     IdentityPoolId: 'eu-central-1:7779208d-624e-4741-9f76-42a18bbd9cae',
 // });
-
+const TARGET_FPS = 10;
 const REGION = 'eu-central-1';
 const IDENTITY_POOL_ID = 'eu-central-1:25035041-4088-45af-80da-abdaf28f521b';
 const KVS_NAME = 'traffic-guard';
 const isInProduction = false;
-const DATA_ENDPOINT = `https://znvljdl845.execute-api.eu-central-1.amazonaws.com/Stage/streams/`;
+const DATA_ENDPOINT = `https://6t9eq1coo0.execute-api.eu-central-1.amazonaws.com/Stage/streams?stream=traffic-guard`;
 
 const webcamConfig = {
     /*
@@ -41,7 +41,7 @@ const webcamConfig = {
     Flip horiz.
      */
     flip_horiz: true,
-    fps: 25,
+    fps: TARGET_FPS,
     unfreeze_snap: true,
     upload_name: 'webcam'
 };
@@ -52,7 +52,7 @@ var frameBuffer;
 
 function startStreaming() {
     // Inititialize frame buffer.
-    frameBuffer = new FrameBuffer({ size: 40 });
+    frameBuffer = new FrameBuffer({ size: TARGET_FPS });
     // Attempt to stream webcam feed to canvas element.
     Webcam.attach("#webcam-feed-container");
     // When webcam feed acquired, executes callback.
@@ -61,7 +61,7 @@ function startStreaming() {
 
 var looperPromise;
 function startStreamLoop() {
-    var TARGET_FPS = 10;
+
     var looper = function() {
         // Pass current frame image data to handler.
         Webcam.snap(frameCallback);
@@ -89,6 +89,11 @@ function postFrameData(data, endpoint, callback) {
     $http.open("POST", endpoint);
     $http.setRequestHeader("Content-Type", "text/plain");
 
+    $http.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE) {
+            console.log(`Sent images. Status: ${this.status} Response body: '${$http.responseText}'`);
+        }
+    };
     $http.send(JSON.stringify(data));
     // const jsonData = JSON.stringify(data)
     // const authData = {
