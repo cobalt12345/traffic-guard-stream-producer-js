@@ -3,12 +3,12 @@
 // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 //     IdentityPoolId: 'eu-central-1:7779208d-624e-4741-9f76-42a18bbd9cae',
 // });
-const TARGET_FPS = 10;
+const TARGET_FPS = 25;
 const REGION = 'eu-central-1';
 const IDENTITY_POOL_ID = 'eu-central-1:25035041-4088-45af-80da-abdaf28f521b';
 const KVS_NAME = 'traffic-guard';
 const isInProduction = false;
-const DATA_ENDPOINT = `https://6t9eq1coo0.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
+const DATA_ENDPOINT = `https://73sk5ixd4f.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
 
 const webcamConfig = {
     /*
