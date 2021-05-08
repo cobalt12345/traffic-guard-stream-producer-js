@@ -8,7 +8,7 @@ const REGION = 'eu-central-1';
 const IDENTITY_POOL_ID = 'eu-central-1:25035041-4088-45af-80da-abdaf28f521b';
 const KVS_NAME = 'traffic-guard';
 const isInProduction = false;
-const DATA_ENDPOINT = `https://73sk5ixd4f.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
+const DATA_ENDPOINT = `https://eorb1nmav7.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
 
 const webcamConfig = {
     /*
