@@ -40,7 +40,7 @@ const webcamConfig = {
     /*
     Flip horiz.
      */
-    flip_horiz: true,
+    flip_horiz: false,
     fps: TARGET_FPS,
     unfreeze_snap: true,
     upload_name: 'webcam'
@@ -62,12 +62,15 @@ function startStreaming() {
 var looperPromise;
 function startStreamLoop() {
 
-    var looper = function() {
-        // Pass current frame image data to handler.
-        Webcam.snap(frameCallback);
-        looperPromise = setTimeout(looper, 1000 / TARGET_FPS);
-    }
-    looper();
+    let timerId = setInterval(() => Webcam.snap(frameCallback), 1000 / TARGET_FPS);
+    looperPromise = timerId;
+
+    // var looper = function() {
+    //     // Pass current frame image data to handler.
+    //
+    //     looperPromise = setTimeout(looper, 1000 / TARGET_FPS);
+    // }
+    // looper();
 }
 
 function frameCallback(imgData) {
