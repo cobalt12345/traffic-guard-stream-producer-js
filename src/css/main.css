@@ -4,7 +4,7 @@
 }
 
 .webcam-controls {
-    width: 50%;
+    width: 30%;
     margin: 0px auto;
     text-align: center;
 }
@@ -19,4 +19,8 @@
     border-right: 1px solid #333333;
     border-bottom: 1px solid #333333;
     border-left: 1px solid #CCCCCC;
+}
+
+.select-camera {
+    float: left;
 }

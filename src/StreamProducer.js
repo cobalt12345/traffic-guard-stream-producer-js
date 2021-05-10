@@ -4,18 +4,14 @@
 //     IdentityPoolId: 'eu-central-1:7779208d-624e-4741-9f76-42a18bbd9cae',
 // });
 const TARGET_FPS = 25;
-const REGION = 'eu-central-1';
-const IDENTITY_POOL_ID = 'eu-central-1:25035041-4088-45af-80da-abdaf28f521b';
-const KVS_NAME = 'traffic-guard';
-const isInProduction = false;
-const DATA_ENDPOINT = `https://eorb1nmav7.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
+const DATA_ENDPOINT = `https://jrtgf74ad1.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
 
 const webcamConfig = {
     /*
     Previewer element size
      */
-    width: 320,
-    height: 240,
+    width: 480,
+    height: 320,
     /*
     File image size
      */
@@ -61,16 +57,8 @@ function startStreaming() {
 
 var looperPromise;
 function startStreamLoop() {
-
     let timerId = setInterval(() => Webcam.snap(frameCallback), 1000 / TARGET_FPS);
     looperPromise = timerId;
-
-    // var looper = function() {
-    //     // Pass current frame image data to handler.
-    //
-    //     looperPromise = setTimeout(looper, 1000 / TARGET_FPS);
-    // }
-    // looper();
 }
 
 function frameCallback(imgData) {
@@ -98,29 +86,6 @@ function postFrameData(data, endpoint, callback) {
         }
     };
     $http.send(JSON.stringify(data));
-    // const jsonData = JSON.stringify(data)
-    // const authData = {
-    // };
-    // let apigClient = apigClientFactory.newClient(authData);
-    // let params = {
-    //     headers: {
-    //         'Access-Control-Request-Method': 'POST',
-    //         'Access-Control-Request-Headers': 'Content-Type, Accept',
-    //         'Origin': 'http://localhost:63342/'
-    //     },
-    //     queryParams: {}
-    // };
-    // let body = {
-    //     jsonData
-    // };
-    // var additionalParams = {
-    //
-    // };
-    // apigClient.streamsPost(params, body, additionalParams).then((result) => {
-    //     console.log(`Images were sent to the KVS. Result: ${result}`);
-    // }).catch((error)=> {
-    //     console.error(error);
-    // })
 }
 
 function stopStreaming() {
@@ -133,3 +98,4 @@ function stopStreaming() {
         console.error(e);
     }
 }
+

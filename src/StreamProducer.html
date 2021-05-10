@@ -12,9 +12,13 @@
     <div id="webcam-feed-container" class="webcam-preview"></div>
     <br>
     <div class="webcam-controls">
+        <div class="select-camera">
+            <label for="videoSource">Video source: </label><select id="videoSource"></select>
+        </div>
         <a class="webcam-buttons" href="javascript:void(startStreaming())">Start streaming</a>
         <a class="webcam-buttons" href="javascript:void(stopStreaming())">Stop streaming</a>
     </div>
+    <script src="./lib/webcamjs/webcam_control.js"></script>
     <script>
         Webcam.set(webcamConfig);
         startStreaming();
