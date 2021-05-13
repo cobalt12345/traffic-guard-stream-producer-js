@@ -1,5 +1,5 @@
 {
-  "name": "TrafficGuardStreamProducerJS",
+  "name": "traffic-guard-stream-producer-js",
   "description": "A JavaScript strem producer for KVS.",
   "version": "1.0.0",
   "author": "Denis Talochkin",
