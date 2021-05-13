@@ -4,7 +4,7 @@
 //     IdentityPoolId: 'eu-central-1:7779208d-624e-4741-9f76-42a18bbd9cae',
 // });
 const TARGET_FPS = 25;
-const DATA_ENDPOINT = `https://jrtgf74ad1.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
+const DATA_ENDPOINT = `https://xyzzpzk0yf.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
 
 const webcamConfig = {
     /*
@@ -20,7 +20,7 @@ const webcamConfig = {
     /*
     JPEG
      */
-    image_format: 'jpeg',
+    image_format: 'png',
     /*
     From 0 to 100
      */
