@@ -3,8 +3,8 @@
 // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 //     IdentityPoolId: 'eu-central-1:7779208d-624e-4741-9f76-42a18bbd9cae',
 // });
-const TARGET_FPS = 25;
-const DATA_ENDPOINT = `https://xyzzpzk0yf.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
+const TARGET_FPS = 10;
+const DATA_ENDPOINT = `https://tkg4ikff4l.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
 
 const webcamConfig = {
     /*
