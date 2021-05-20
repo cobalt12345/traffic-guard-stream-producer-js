@@ -25,13 +25,22 @@ function getStream() {
     }
     const videoSource = cameraSelect.value;
     const constraints = {
-        video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+        video: {deviceId: videoSource ? {exact: videoSource} : undefined},
     };
     return navigator.mediaDevices.getUserMedia(constraints).
     then(gotStream).catch(handleError);
 }
 
 function gotStream(stream) {
+    stream.getVideoTracks().forEach(videoTrack => {
+        let videoTrackConstraints = videoTrack.getConstraints();
+        try {
+            videoTrackConstraints.facingMode = 'environment';
+            videoTrack.applyConstraints(videoTrackConstraints);
+        } catch(e) {
+            console.error(`Can not set track facing mode. Error: ${e}`);
+        }
+    });
     window.stream = stream; // make stream available to console
     cameraSelect.selectedIndex = [...cameraSelect.options].
     findIndex(option => option.text === stream.getVideoTracks()[0].label);

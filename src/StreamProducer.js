@@ -3,9 +3,9 @@
 // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 //     IdentityPoolId: 'eu-central-1:7779208d-624e-4741-9f76-42a18bbd9cae',
 // });
-const TARGET_FPS = 10;
+const TARGET_FPS = 5;
+const FRAGMENT_DURATION_IN_FRAMES = 1 * TARGET_FPS; //2 * TARGET_FPS: fragment duration will be 10 frames = about 2 seconds
 const DATA_ENDPOINT = `https://tkg4ikff4l.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
-
 const webcamConfig = {
     /*
     Previewer element size
@@ -39,16 +39,20 @@ const webcamConfig = {
     flip_horiz: false,
     fps: TARGET_FPS,
     unfreeze_snap: true,
-    upload_name: 'webcam'
+    upload_name: 'webcam',
+    constraints: {
+        video: true
+    }
 };
-
+const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+if (supportedConstraints['facingMode']) {
+    webcamConfig.constraints['facingMode'] = 'environment';
+}
 
 var frameBuffer;
-
-
 function startStreaming() {
     // Inititialize frame buffer.
-    frameBuffer = new FrameBuffer({ size: TARGET_FPS });
+    frameBuffer = new FrameBuffer({ size: FRAGMENT_DURATION_IN_FRAMES });
     // Attempt to stream webcam feed to canvas element.
     Webcam.attach("#webcam-feed-container");
     // When webcam feed acquired, executes callback.
@@ -85,7 +89,11 @@ function postFrameData(data, endpoint, callback) {
             console.log(`Sent images. Status: ${this.status} Response body: '${$http.responseText}'`);
         }
     };
-    $http.send(JSON.stringify(data));
+    try {
+        $http.send(JSON.stringify(data));
+    } catch(e) {
+        console.error(e);
+    }
 }
 
 function stopStreaming() {
