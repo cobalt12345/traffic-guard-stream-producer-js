@@ -5,7 +5,7 @@
 // });
 const TARGET_FPS = 5;
 const FRAGMENT_DURATION_IN_FRAMES = 1 * TARGET_FPS; //2 * TARGET_FPS: fragment duration will be 10 frames = about 2 seconds
-const DATA_ENDPOINT = `https://tkg4ikff4l.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
+const DATA_ENDPOINT = `https://c5tf9yq958.execute-api.eu-central-1.amazonaws.com/Stage/streams`;
 const webcamConfig = {
     /*
     Previewer element size
