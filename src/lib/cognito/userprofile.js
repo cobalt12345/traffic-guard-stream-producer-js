@@ -2,11 +2,21 @@ var myHeaders = new Headers();
 myHeaders.set('Cache-Control', 'no-store');
 var urlParams = new URLSearchParams(window.location.search);
 var tokens;
-var domain = "tg-auth";
+var domain = "trafficguard";
 var region = "eu-central-1";
-var appClientId = "4276834pb1oldjet7qp9d6ihpu";
-var userPoolId = "eu-central-1_1d6GtHMbz";
-var redirectURI = "https://d1mryvmw6msxcm.cloudfront.net/index.html";
+var userPoolId = "eu-central-1_AQvwBH8Uw";
+
+const appClientId4CloudFrontDistr = "6likfajrpnbq69u4jd59h7i6uu";
+const appClientId4TalochkIn       = "4a07b5f5ebnuc7saghgrmtmdut";
+
+var appClientId = origin.includes('talochk.in') ? appClientId4TalochkIn : origin.includes('cloudfront.net')
+    ? appClientId4CloudFrontDistr : undefined;
+
+const redirectURI4CloufFrontDistr = "https://d2m018aby14w13.cloudfront.net/index.html";
+const redirectURI4TalochkIn = "https://talochk.in/index.html";
+
+var redirectURI = origin.includes('talochk.in') ? redirectURI4TalochkIn : origin.includes('cloudfront.net')
+    ? redirectURI4CloufFrontDistr : undefined;
 
 //Convert Payload from Base64-URL to JSON
 const decodePayload = payload => {
