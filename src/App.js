@@ -1,76 +1,181 @@
 import logo from './logo.svg';
 import './App.css';
-import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
-import * as React from "react";
-import { Auth } from 'aws-amplify';
+import {withAuthenticator, AmplifySignOut} from '@aws-amplify/ui-react';
+import React from 'react';
+import Webcam from "react-webcam";
+import Amplify, { API, Auth } from 'aws-amplify';
 
-export default withAuthenticator(App);
+const TARGET_FPS = 5;
+const FRAGMENT_DURATION_IN_FRAMES = 1 * TARGET_FPS;
+const DATA_ENDPOINT = 'https://c5tf9yq958.execute-api.eu-central-1.amazonaws.com/Stage/streams';
 
-class LoginForm extends React.Component {
+Amplify.configure({
+    aws_cloud_logic_custom:  [
+        {
+            name: "WebcamSnapshots2KvsApi", // (required) - API Name (This name is used used in the client app to identify the API - API.get('your-api-name', '/path'))
+            endpoint: "https://c5tf9yq958.execute-api.eu-central-1.amazonaws.com/Stage", // (required) -API Gateway URL + environment
+            region: "us-east-1" // (required) - API Gateway region
+        }
+    ],
+    Auth: {
+        // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
+        identityPoolId: 'eu-central-1:da8e19ba-c960-4b04-8d21-9ac133178468',
+        // REQUIRED - Amazon Cognito Region
+        region: 'eu-central-1',
+        // OPTIONAL - Amazon Cognito User Pool ID
+        userPoolId: 'eu-central-1_AQvwBH8Uw',
+        // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
+        userPoolWebClientId: '1qe5qlivb2cep1pptt38t80en2',
+        mandatorySignIn: true,
+        authenticationFlowType: 'USER_PASSWORD_AUTH'
+    },
+    API: {
+        endpoints: [
+            {
+                name: 'WebcamSnapshots2KvsApi',
+                endpoint: "https://c5tf9yq958.execute-api.eu-central-1.amazonaws.com/Stage"
+            }
+        ]
+    }
+});
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      userName: '',
-      userPassword: '',
-      toString: function() {
-        return `User name: '${this.userName}' User password: '${this.userPassword.replaceAll(/./g, 
-            '*')}'`;
-      }
+class WebcamCapture extends React.Component {
+    frameBuffer = new FrameBuffer({size: FRAGMENT_DURATION_IN_FRAMES});
+
+    videoConstraints = {
+        width: 640,
+        height: 480,
     };
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            facingMode: {
+                exact: 'environment'
+            }
+        };
+        this.switchFacingMode = this.switchFacingMode.bind(this);
+        this.webcamRef = React.createRef();
+    };
 
-  handleChange(event) {
-    let formState = this.state;
-    formState[event.target.id] = event.target.value;
-    this.setState(formState);
-    console.debug(`Something changed ${formState}`);
-  }
+    switchFacingMode(event) {
 
-  async handleSubmit(event) {
-    try {
-      const user = await Auth.signIn(this.state.userName, this.state.userPassword);
-    } catch (e) {
-      console.error(`User cannot be authenticated! ${e}`);
     }
-    event.preventDefault();
-  }
 
+    componentDidMount() {
+        this.timerId = setInterval(() => this.takeSnapshot(), 1000 / TARGET_FPS);
+    }
 
-  render() {
-    return (<form onSubmit={this.handleSubmit}>
-      <div>
-        <input type="text" id="userName" value={this.state.userName} onChange={this.handleChange}/>
-      </div>
-      <div>
-        <input type="password" id="userPassword" value={this.state.userPassword} onChange={this.handleChange}/>
-      </div>
-      <div>
-        <button type="submit" value="Sign In">Sign in</button>
-      </div>
-      <div>
-        <AmplifySignOut />
-      </div>
-    </form>);
-  }
+    takeSnapshot() {
+        let image = this.webcamRef.current.getScreenshot();
+        this.frameBuffer.addFrame(image);
+        if (this.frameBuffer.getSize() >= this.frameBuffer.bufferSize) {
+            let fragment = this.frameBuffer.getData();
+            this.frameBuffer.clear();
+            //postFrameData(fragment, DATA_ENDPOINT);
 
-  authenticateUser(e) {
-    console.debug(`Submit auth. form... ${e}`);
-  }
+            postFrameDataWithAuth(fragment);
+        }
+
+        async function postFrameDataWithAuth(fragment) {
+            const apiName = 'WebcamSnapshots2KvsApi';
+            const path = '/streams';
+            const myInit = {
+                body: JSON.stringify(fragment), // replace this with attributes you need
+                headers: {
+                    "Content-Type": "text/plain"
+                }
+            };
+            return await API.post(apiName, path, myInit);
+        }
+
+        function postFrameData(data, endpoint) {
+            var $http = new XMLHttpRequest();
+            $http.open("POST", endpoint);
+            $http.setRequestHeader("Content-Type", "text/plain");
+
+            $http.onreadystatechange = function () {
+                if (this.readyState === XMLHttpRequest.DONE) {
+                    console.log(`Sent images. Status: ${this.status} Response body: '${$http.responseText}'`);
+                }
+            };
+            try {
+                $http.send(JSON.stringify(data));
+            } catch(e) {
+                console.error(e);
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerId);
+    }
+
+    render() {
+
+        const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+        if (supportedConstraints['facingMode']) {
+            this.videoConstraints['facingMode'] = 'environment';
+        }
+
+        return (
+            <div>
+                <div>
+                    <Webcam id='streamingWebcam'
+                            ref={this.webcamRef}
+                            videoConstraints={this.videoConstraints} screenshotFormat='image/png'/>
+                </div>
+                <div>
+                    <button name='Switch Camera' onClick={this.switchFacingMode}>
+                        Switch Camera
+                    </button>
+                </div>
+                <div>
+                    <AmplifySignOut/>
+                </div>
+            </div>);
+    }
 
 }
 
-// export default LoginForm;
+const FrameBuffer = function(params) {
+    var that = Object.create(FrameBuffer.prototype);
 
-function App() {
-  return (
-    <div className="App">
+    var MIN_BUFFER_SIZE = 1;
+    var frameBuffer = [];
+    var frameTimestamps = [];
+    var bufferSize = Math.max(MIN_BUFFER_SIZE, params.size);
+    that.bufferSize = bufferSize;
+    var startTimestamp;
+    var lastTimestamp;
 
-    </div>
-  );
-}
+    that.addFrame = function(imgData) {
+        frameBuffer.push(imgData);
+        startTimestamp = startTimestamp || new Date().getTime();
+        lastTimestamp = new Date().getTime();
+        frameTimestamps.push(lastTimestamp);
+    };
+    that.clear = function() {
+        frameBuffer = [];
+        frameTimestamps = [];
+        startTimestamp = null;
+    };
+    that.shouldClear = function() {
+        return frameBuffer.length >= bufferSize;
+    };
+    that.getData = function() {
+        return {
+            frames: frameBuffer.slice(),
+            framerate: Math.round(1000 * frameBuffer.length / (lastTimestamp - startTimestamp)),
+            timestamps: frameTimestamps.slice()
+        }
+    };
+    that.getSize = function() {
+        return frameBuffer.length;
+    };
 
-// export default App;
+    Object.freeze(that);
+    return that;
+};
+
+export default withAuthenticator(WebcamCapture);

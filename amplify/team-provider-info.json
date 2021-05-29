@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tgstreamproducerjs-dev-190840-authRole",
+      "UnauthRoleArn": "arn:aws:iam::469694857107:role/amplify-tgstreamproducerjs-dev-190840-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::469694857107:role/amplify-tgstreamproducerjs-dev-190840-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-tgstreamproducerjs-dev-190840-deployment",
+      "UnauthRoleName": "amplify-tgstreamproducerjs-dev-190840-unauthRole",
+      "StackName": "amplify-tgstreamproducerjs-dev-190840",
+      "StackId": "arn:aws:cloudformation:eu-central-1:469694857107:stack/amplify-tgstreamproducerjs-dev-190840/f9ab8db0-bfce-11eb-aa0e-021a5f3bc3e4",
+      "AmplifyAppId": "d35tzo5w4ntsp"
+    },
+    "categories": {
+      "auth": {
+        "tgstreamproducerjsee3d458f": {}
+      }
+    }
+  }
+}

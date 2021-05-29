@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import LoginForm from './App';
+import WebcamCapture from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <LoginForm />
+    <WebcamCapture />
   </React.StrictMode>,
   document.getElementById('root')
 );
