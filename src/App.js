@@ -1,39 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
-import {withAuthenticator, AmplifySignOut} from '@aws-amplify/ui-react';
+import {AmplifySignOut, withAuthenticator} from '@aws-amplify/ui-react';
 import React from 'react';
 import Webcam from "react-webcam";
-import Amplify, { API, Auth } from 'aws-amplify';
+import Amplify, {API, Auth} from 'aws-amplify';
+import awsconfig from './aws-exports';
 
 const TARGET_FPS = 5;
 const FRAGMENT_DURATION_IN_FRAMES = 1 * TARGET_FPS;
-const DATA_ENDPOINT = 'https://c5tf9yq958.execute-api.eu-central-1.amazonaws.com/Stage/streams';
+const DATA_ENDPOINT = 'https://joqolrfd76.execute-api.eu-central-1.amazonaws.com/Stage';
 
+Amplify.configure(awsconfig);
 Amplify.configure({
-    aws_cloud_logic_custom:  [
-        {
-            name: "WebcamSnapshots2KvsApi", // (required) - API Name (This name is used used in the client app to identify the API - API.get('your-api-name', '/path'))
-            endpoint: "https://c5tf9yq958.execute-api.eu-central-1.amazonaws.com/Stage", // (required) -API Gateway URL + environment
-            region: "us-east-1" // (required) - API Gateway region
-        }
-    ],
-    Auth: {
-        // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'eu-central-1:da8e19ba-c960-4b04-8d21-9ac133178468',
-        // REQUIRED - Amazon Cognito Region
-        region: 'eu-central-1',
-        // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'eu-central-1_AQvwBH8Uw',
-        // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '1qe5qlivb2cep1pptt38t80en2',
-        mandatorySignIn: true,
-        authenticationFlowType: 'USER_PASSWORD_AUTH'
-    },
     API: {
         endpoints: [
             {
-                name: 'WebcamSnapshots2KvsApi',
-                endpoint: "https://c5tf9yq958.execute-api.eu-central-1.amazonaws.com/Stage"
+                name: "WebcamSnapshots2KvsApi",
+                endpoint: DATA_ENDPOINT,
+                custom_header: async () => {
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    //!!!!!CORSE MUST BE ENABLED FOR API GATEWAY. OTHERWISE DOESN'T WORK!!!!!!!!!!!
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                    // The Access Token contains scopes and groups and is used to grant access to authorized resources.
+                    //return { Authorization: `Bearer ${(await Auth.currentSession()).getAccessToken().getJwtToken()}` }
+                    //The ID Token contains claims about the identity of the authenticated user such as name, email,
+                    // and phone_number.
+                    return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
+                }
             }
         ]
     }
@@ -73,7 +66,6 @@ class WebcamCapture extends React.Component {
             let fragment = this.frameBuffer.getData();
             this.frameBuffer.clear();
             //postFrameData(fragment, DATA_ENDPOINT);
-
             postFrameDataWithAuth(fragment);
         }
 
@@ -81,9 +73,9 @@ class WebcamCapture extends React.Component {
             const apiName = 'WebcamSnapshots2KvsApi';
             const path = '/streams';
             const myInit = {
-                body: JSON.stringify(fragment), // replace this with attributes you need
+                body: fragment, // replace this with attributes you need
                 headers: {
-                    "Content-Type": "text/plain"
+                    "Content-Type": "application/json"
                 }
             };
             return await API.post(apiName, path, myInit);
