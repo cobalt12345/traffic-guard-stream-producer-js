@@ -1,5 +1,5 @@
 import './App.css';
-import {AmplifySignOut, withAuthenticator} from '@aws-amplify/ui-react';
+import {AmplifySignOut} from '@aws-amplify/ui-react';
 import React from 'react';
 import Webcam from "react-webcam";
 import Amplify, {API, Auth} from 'aws-amplify';
@@ -9,8 +9,18 @@ const TARGET_FPS = 5;
 const FRAGMENT_DURATION_IN_FRAMES = 1 * TARGET_FPS;
 const DATA_ENDPOINT = 'https://joqolrfd76.execute-api.eu-central-1.amazonaws.com/Stage';
 
-Amplify.configure(awsconfig);
+
 Amplify.configure({
+    ...awsconfig,
+    auth0: {
+        domain: 'https://trafficguard-develope.auth.eu-central-1.amazoncognito.com',
+        clientID: '2ftpcgau6ofdr3pgojrn3gnq4v',
+        redirectUri: 'http://localhost:3000',
+        audience: 'http://localhost:3000/userinfo',
+        responseType: 'token id_token', // for now we only support implicit grant flow
+        scope: 'openid profile email', // the scope used by your app
+        returnTo: 'http://localhost:3000'
+    },
     API: {
         endpoints: [
             {
@@ -181,4 +191,4 @@ const FrameBuffer = function(params) {
     return that;
 };
 
-export default withAuthenticator(WebcamCapture);
+export default WebcamCapture;

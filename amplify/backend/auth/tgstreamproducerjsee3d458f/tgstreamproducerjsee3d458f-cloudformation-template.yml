@@ -67,10 +67,10 @@ Parameters:
   userpoolClientGenerateSecret:
     Type: String
             
+    
   userpoolClientRefreshTokenValidity:
-    Type: String
-  
-            
+    Type: Number
+          
         
   userpoolClientWriteAttributes:
     Type: CommaDelimitedList
@@ -244,10 +244,10 @@ Resources:
       Policies:
         PasswordPolicy:
           MinimumLength: !Ref passwordPolicyMinLength
-          RequireLowercase: true
-          RequireNumbers: true
+          RequireLowercase: false
+          RequireNumbers: false
           RequireSymbols: false
-          RequireUppercase: true
+          RequireUppercase: false
       
       MfaConfiguration: !Ref mfaConfiguration
       SmsVerificationMessage: !Ref smsVerificationMessage
