@@ -67,10 +67,10 @@ Parameters:
   userpoolClientGenerateSecret:
     Type: String
             
-    
   userpoolClientRefreshTokenValidity:
-    Type: Number
-          
+    Type: String
+  
+            
         
   userpoolClientWriteAttributes:
     Type: CommaDelimitedList
@@ -137,18 +137,6 @@ Parameters:
   hostedUI:
     Type: String
             
-  hostedUIDomainName:
-    Type: String
-  
-            
-        
-  authProvidersUserPool:
-    Type: CommaDelimitedList
-      
-  hostedUIProviderMeta:
-    Type: String
-  
-            
       
   parentStack:
     Type: String
@@ -162,6 +150,18 @@ Parameters:
     Type: CommaDelimitedList
       
   hostedUIProviderCreds:
+    Type: String
+  
+            
+  hostedUIDomainName:
+    Type: String
+  
+            
+        
+  authProvidersUserPool:
+    Type: CommaDelimitedList
+      
+  hostedUIProviderMeta:
     Type: String
   
             
@@ -244,10 +244,10 @@ Resources:
       Policies:
         PasswordPolicy:
           MinimumLength: !Ref passwordPolicyMinLength
-          RequireLowercase: false
-          RequireNumbers: false
+          RequireLowercase: true
+          RequireNumbers: true
           RequireSymbols: false
-          RequireUppercase: false
+          RequireUppercase: true
       
       MfaConfiguration: !Ref mfaConfiguration
       SmsVerificationMessage: !Ref smsVerificationMessage
