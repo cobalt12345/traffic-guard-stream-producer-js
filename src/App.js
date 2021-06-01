@@ -45,13 +45,21 @@ class WebcamCapture extends React.Component {
         this.state = {
             facingMode: {
                 exact: 'environment'
-            }
+            },
+            streamStarted: false
         };
         this.switchFacingMode = this.switchFacingMode.bind(this);
+        this.startStopStream = this.startStopStream.bind(this);
         this.webcamRef = React.createRef();
     };
 
     switchFacingMode(event) {
+
+    }
+
+    startStopStream() {
+        this.setState({streamStarted: !this.state.streamStarted});
+        let videoElement = document.querySelector('video')
 
     }
 
@@ -60,13 +68,15 @@ class WebcamCapture extends React.Component {
     }
 
     takeSnapshot() {
-        let image = this.webcamRef.current.getScreenshot();
-        this.frameBuffer.addFrame(image);
-        if (this.frameBuffer.getSize() >= this.frameBuffer.bufferSize) {
-            let fragment = this.frameBuffer.getData();
-            this.frameBuffer.clear();
-            //postFrameData(fragment, DATA_ENDPOINT);
-            postFrameDataWithAuth(fragment);
+        if (this.state.streamStarted) {
+            let image = this.webcamRef.current.getScreenshot();
+            this.frameBuffer.addFrame(image);
+            if (this.frameBuffer.getSize() >= this.frameBuffer.bufferSize) {
+                let fragment = this.frameBuffer.getData();
+                this.frameBuffer.clear();
+                //postFrameData(fragment, DATA_ENDPOINT);
+                postFrameDataWithAuth(fragment);
+            }
         }
 
         async function postFrameDataWithAuth(fragment) {
@@ -115,11 +125,12 @@ class WebcamCapture extends React.Component {
                 <div>
                     <Webcam id='streamingWebcam'
                             ref={this.webcamRef}
+                            imageSmoothing = 'false'
                             videoConstraints={this.videoConstraints} screenshotFormat='image/png'/>
                 </div>
                 <div>
-                    <button name='Switch Camera' onClick={this.switchFacingMode}>
-                        Switch Camera
+                    <button onClick={this.startStopStream}>
+                        {(() => {return this.state.streamStarted ? 'Stop Streaming' : 'Start Streaming';})()}
                     </button>
                 </div>
                 <div>
