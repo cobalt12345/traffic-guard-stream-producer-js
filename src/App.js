@@ -4,6 +4,19 @@ import React from 'react';
 import Webcam from "react-webcam";
 import Amplify, {API, Auth} from 'aws-amplify';
 import awsconfig from './aws-exports';
+import {Button, Container, Grid, LinearProgress} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
+const useStyles = theme => ({
+    root: {
+        flexGrow: 1,
+
+    },
+    cameraPreview: {
+        width: '80%',
+        height: '80%'
+    }
+});
 
 const TARGET_FPS = 5;
 const FRAGMENT_DURATION_IN_FRAMES = 1 * TARGET_FPS;
@@ -58,9 +71,7 @@ class WebcamCapture extends React.Component {
     }
 
     startStopStream() {
-        this.setState({streamStarted: !this.state.streamStarted});
-        let videoElement = document.querySelector('video')
-
+        this.setState((prevState, props) => {return {streamStarted: !prevState.streamStarted}});
     }
 
     componentDidMount() {
@@ -120,24 +131,34 @@ class WebcamCapture extends React.Component {
         if (supportedConstraints['facingMode']) {
             this.videoConstraints['facingMode'] = 'environment';
         }
+        const {classes} = this.props;
 
         return (
-            <div>
-                <div>
-                    <Webcam id='streamingWebcam'
+            <Grid
+                className={classes.root}
+                container
+                direction="column"
+                justify="flex-start"
+                alignItems="center">
+                <Grid item xs={12} spacing={3}>
+                <Webcam className={classes.cameraPreview} id='streamingWebcam'
+                            audio={false}
                             ref={this.webcamRef}
                             imageSmoothing = 'false'
                             videoConstraints={this.videoConstraints} screenshotFormat='image/png'/>
-                </div>
-                <div>
-                    <button onClick={this.startStopStream}>
-                        {(() => {return this.state.streamStarted ? 'Stop Streaming' : 'Start Streaming';})()}
-                    </button>
-                </div>
-                <div>
-                    <AmplifySignOut/>
-                </div>
-            </div>);
+
+                    {this.state.streamStarted ? <LinearProgress variant="indeterminate" color="secondary"/> : <div/>}
+                </Grid>
+
+                <Grid item xs={12} spacing={3}>
+                    <Grid container>
+                        <Button variant="contained" color="secondary" onClick={this.startStopStream}>
+                            {(() => {return this.state.streamStarted ? 'Stop Streaming' : 'Start Streaming';})()}
+                        </Button>
+                        <AmplifySignOut/>
+                    </Grid>
+                </Grid>
+            </Grid>);
     }
 
 }
@@ -182,4 +203,4 @@ const FrameBuffer = function(params) {
     return that;
 };
 
-export default WebcamCapture;
+export default withStyles(useStyles) (WebcamCapture);
