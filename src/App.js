@@ -13,8 +13,6 @@ const useStyles = theme => ({
 
     },
     cameraPreview: {
-        width: '80%',
-        height: '80%'
     }
 });
 
