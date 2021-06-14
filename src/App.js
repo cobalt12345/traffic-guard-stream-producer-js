@@ -4,8 +4,8 @@ import React from 'react';
 import Webcam from "react-webcam";
 import Amplify, {API, Auth} from 'aws-amplify';
 import awsconfig from './aws-exports';
-import {Button, Container, Grid, LinearProgress} from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import {Button, Grid, LinearProgress} from '@material-ui/core';
+import {withStyles} from '@material-ui/core/styles';
 
 const useStyles = theme => ({
     root: {
@@ -80,6 +80,7 @@ class WebcamCapture extends React.Component {
     takeSnapshot() {
         if (this.state.streamStarted) {
             let image = this.webcamRef.current.getScreenshot();
+
             this.frameBuffer.addFrame(image);
             if (this.frameBuffer.getSize() >= this.frameBuffer.bufferSize) {
                 let fragment = this.frameBuffer.getData();
@@ -143,7 +144,7 @@ class WebcamCapture extends React.Component {
                             audio={false}
                             ref={this.webcamRef}
                             imageSmoothing = 'false'
-                            videoConstraints={this.videoConstraints} screenshotFormat='image/png'/>
+                            videoConstraints={this.videoConstraints} screenshotFormat='image/jpeg'/>
 
                     {this.state.streamStarted ? <LinearProgress variant="indeterminate" color="secondary"/> : <div/>}
                 </Grid>
