@@ -4,8 +4,9 @@ import React from 'react';
 import Webcam from "react-webcam";
 import Amplify, {API, Auth} from 'aws-amplify';
 import awsconfig from './aws-exports';
-import {Button, Grid, LinearProgress} from '@material-ui/core';
-import {withStyles} from '@material-ui/core/styles';
+import {Button, Container, Grid, LinearProgress} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import piexif from 'piexifjs';
 
 const useStyles = theme => ({
     root: {
@@ -80,8 +81,32 @@ class WebcamCapture extends React.Component {
     takeSnapshot() {
         if (this.state.streamStarted) {
             let image = this.webcamRef.current.getScreenshot();
+            let imageWithExif = null;
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    const latitude = pos.coords.latitude;
+                    const longitude = pos.coords.longitude;
+                    const gps = {};
+                    gps[piexif.GPSIFD.GPSLatitudeRef] = latitude < 0 ? 'S' : 'N';
+                    gps[piexif.GPSIFD.GPSLatitude] = piexif.GPSHelper.degToDmsRational(latitude);
+                    gps[piexif.GPSIFD.GPSLongitudeRef] = longitude < 0 ? 'W' : 'E';
+                    gps[piexif.GPSIFD.GPSLongitude] = piexif.GPSHelper.degToDmsRational(longitude);
+                    const exifData = piexif.load(image);
+                    exifData.GPS = gps;
+                    const exifBytes = piexif.dump(exifData);
+                    this.imageWithExif = piexif.insert(exifBytes, image);
+                },
+                error => console.warn(error),
+                {timeout: 1000 / TARGET_FPS});
 
-            this.frameBuffer.addFrame(image);
+            if (this.imageWithExif != null) {
+                console.debug("Image with EXIF");
+                this.frameBuffer.addFrame(this.imageWithExif);
+            } else {
+                console.debug("Image without EXIF");
+                this.frameBuffer.addFrame(image);
+            }
+
             if (this.frameBuffer.getSize() >= this.frameBuffer.bufferSize) {
                 let fragment = this.frameBuffer.getData();
                 this.frameBuffer.clear();
