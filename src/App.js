@@ -4,8 +4,8 @@ import React from 'react';
 import Webcam from "react-webcam";
 import Amplify, {API, Auth} from 'aws-amplify';
 import awsconfig from './aws-exports';
-import {Button, Container, Grid, LinearProgress} from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import {Button, Grid, LinearProgress} from '@material-ui/core';
+import {withStyles} from '@material-ui/core/styles';
 import piexif from 'piexifjs';
 
 const useStyles = theme => ({
@@ -93,6 +93,7 @@ class WebcamCapture extends React.Component {
                     gps[piexif.GPSIFD.GPSLongitude] = piexif.GPSHelper.degToDmsRational(longitude);
                     const exifData = piexif.load(image);
                     exifData.GPS = gps;
+                    exifData.Exif[piexif.ExifIFD.LensMake] = 'TrafficGuardStreamProducerJS';
                     const exifBytes = piexif.dump(exifData);
                     this.imageWithExif = piexif.insert(exifBytes, image);
                 },
