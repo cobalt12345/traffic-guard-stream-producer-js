@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "TrafficGuard",
+  "name": "Traffic Guard",
   "icons": [
     {
       "src": "favicon.ico",

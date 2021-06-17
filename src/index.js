@@ -3,14 +3,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {withAuthenticator} from "@aws-amplify/ui-react";
-import WebcamCapture from './App';
+import {default as WebcamCapture, FRAGMENT_DURATION_IN_FRAMES, TARGET_FPS} from "./App";
+
 import reportWebVitals from './reportWebVitals';
 
 const AppWithAuth = withAuthenticator(WebcamCapture);
 
 ReactDOM.render(
   <React.StrictMode>
-      <AppWithAuth />
+      <AppWithAuth bufferSize={FRAGMENT_DURATION_IN_FRAMES} target_fps={TARGET_FPS} />
   </React.StrictMode>,
   document.getElementById('root')
 );
