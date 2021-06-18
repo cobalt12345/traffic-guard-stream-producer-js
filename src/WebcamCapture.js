@@ -14,7 +14,6 @@ export default class WebcamCapture extends React.Component {
 
     constructor(props) {
         super(props);
-        debugger;
         this.frameBuffer = new FrameBuffer({size: props['bufferSize']});
         this.TARGET_FPS = props['target_fps'];
         this.state = {
