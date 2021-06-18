@@ -14,7 +14,7 @@ export default class WebcamCapture extends React.Component {
 
     constructor(props) {
         super(props);
-
+        debugger;
         this.frameBuffer = new FrameBuffer({size: props['bufferSize']});
         this.TARGET_FPS = props['target_fps'];
         this.state = {
@@ -41,7 +41,10 @@ export default class WebcamCapture extends React.Component {
     componentDidMount() {
         this.timerId = setInterval(() => this.takeSnapshot(), 1000 / this.TARGET_FPS);
         // Auth.currentAuthenticatedUser().then(user => console.debug(`Current authenticated user: ${JSON.stringify(user)}`))
-        this.positionHandler = navigator.geolocation.watchPosition(this.positionChanged);
+        this.positionHandler = navigator.geolocation.watchPosition(this.positionChanged, error => {
+            console.error('Cannot get position: ' + error.code + " : " + error.message);
+            alert(`${error.code}: ${error.message}`);
+        });
     }
 
     componentWillUnmount() {
@@ -50,6 +53,7 @@ export default class WebcamCapture extends React.Component {
     }
 
     positionChanged(pos) {
+        console.debug('Position changed: ' + pos);
         const latitude = pos.coords.latitude;
         const longitude = pos.coords.longitude;
         const gps = {};
@@ -71,13 +75,16 @@ export default class WebcamCapture extends React.Component {
     takeSnapshot() {
         if (this.state.streamStarted) {
             let image = this.webcamRef.current.getScreenshot(this.videoConstraints);
-            let imageExtendedWithExif = piexif.insert(this.state.exifWithGpsCoords, image);
-            if (imageExtendedWithExif) {
-                console.debug("Image with EXIF");
-                this.frameBuffer.addFrame(imageExtendedWithExif);
-            } else {
-                console.debug("Image without EXIF");
-                this.frameBuffer.addFrame(image);
+            if (null != this.state.exifWithGpsCoords) {
+                let imageExtendedWithExif = piexif.insert(this.state.exifWithGpsCoords, image);
+                console.debug('Image with exif: ' + imageExtendedWithExif);
+                if (imageExtendedWithExif) {
+                    console.debug("Image with EXIF");
+                    this.frameBuffer.addFrame(imageExtendedWithExif);
+                } else {
+                    console.debug("Image without EXIF");
+                    this.frameBuffer.addFrame(image);
+                }
             }
             if (this.frameBuffer.getSize() >= this.frameBuffer.bufferSize) {
                 let fragment = this.frameBuffer.getData();

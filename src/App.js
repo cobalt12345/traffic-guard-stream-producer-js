@@ -11,9 +11,9 @@ const useStyles = theme => ({
         // "align-items": "center"
     },
     cameraPreview: {
-        // width: "80%",
-        // height: "80%",
-        // paddingLeft: 64
+        width: "70%",
+        height: "70%",
+        paddingLeft: 111
     }
 });
 
