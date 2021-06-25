@@ -21,11 +21,14 @@ export default class WebcamCapture extends React.Component {
                 exact: 'environment'
             },
             streamStarted: false,
-            exifWithGpsCoords: null
+            exifWithGpsCoords: null,
+            inlineConsoleVisible: false
         };
         this.switchFacingMode = this.switchFacingMode.bind(this);
         this.startStopStream = this.startStopStream.bind(this);
         this.positionChanged = this.positionChanged.bind(this);
+        this.showHideConsole = this.showHideConsole.bind(this);
+
         this.webcamRef = React.createRef();
     };
 
@@ -44,6 +47,7 @@ export default class WebcamCapture extends React.Component {
             console.error('Cannot get position: ' + error.code + " : " + error.message);
             alert(`${error.code}: ${error.message}`);
         });
+
     }
 
     componentWillUnmount() {
@@ -124,6 +128,17 @@ export default class WebcamCapture extends React.Component {
             }
         }
     }
+    showHideConsole() {
+        this.setState((prevState, props) => {
+            let inlinedConsole = document.getElementById('consoleWrapper');
+            if (prevState.inlineConsoleVisible) {
+                inlinedConsole.setAttribute('hidden', 'true');
+            } else {
+                inlinedConsole.removeAttribute('hidden');
+            }
+            return {inlineConsoleVisible: !prevState.inlineConsoleVisible};
+        });
+    }
 
     render() {
 
@@ -141,6 +156,11 @@ export default class WebcamCapture extends React.Component {
                 direction="column"
                 justify="flex-start"
                 alignItems="center">
+                <Grid item xs={12}>
+                    <Button variant='outlined' color='primary' size='small' onClick={this.showHideConsole}>
+                        Console
+                    </Button>
+                </Grid>
                 <Grid item xs={12}>
                     <Webcam className={classes.cameraPreview} id='streamingWebcam'
                             audio={false}
