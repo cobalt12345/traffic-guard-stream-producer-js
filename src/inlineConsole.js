@@ -1,5 +1,4 @@
-
-(function(){
+export function createConsole(){
     var inlineConsole, consoleWrapper, initInlineConsole, sendMsg, toggleVisible, clearConsole, isDescendant,
         consoleHeight = 240,
         //watchEvents = ['click','focus','unfocus','blur','unblur','touchstart','touchend'],
@@ -206,9 +205,9 @@
         sendMsg('ERROR', [message, lineNumber, file] , '#ff0000');
     }
 
-    window.onload = function() {
-        document.body.appendChild(consoleWrapper);
-    };
+    // window.onload = function() {
+    //     document.body.appendChild(consoleWrapper);
+    // };
 
     /**
      * Override and extend the default open/send methods for XMLHttpRequest so we can log this activity
@@ -242,4 +241,5 @@
         this.oldSend(a);
     };
 
-})();
+    return consoleWrapper;
+};

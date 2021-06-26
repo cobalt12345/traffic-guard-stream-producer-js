@@ -4,6 +4,7 @@ import piexif from "piexifjs";
 import {Button, Grid, LinearProgress} from "@material-ui/core";
 import Webcam from "react-webcam";
 import {AmplifySignOut} from "@aws-amplify/ui-react";
+import {createConsole} from "./inlineConsole";
 
 export default class WebcamCapture extends React.Component {
 
@@ -28,6 +29,7 @@ export default class WebcamCapture extends React.Component {
         this.startStopStream = this.startStopStream.bind(this);
         this.positionChanged = this.positionChanged.bind(this);
         this.showHideConsole = this.showHideConsole.bind(this);
+        this.takeSnapshot = this.takeSnapshot.bind(this);
 
         this.webcamRef = React.createRef();
     };
@@ -41,13 +43,28 @@ export default class WebcamCapture extends React.Component {
     }
 
     componentDidMount() {
+        if (navigator.permissions && navigator.permissions.query) {
+            console.debug('Ask geolocation permission');
+            navigator.permissions.query({name: 'geolocation'})
+                .then(function (result) {
+                    console.debug('Geolocation permission: ' + result.state);
+                });
+        } else {
+            console.warn('No permission API');
+        }
         this.timerId = setInterval(() => this.takeSnapshot(), 1000 / this.TARGET_FPS);
         // Auth.currentAuthenticatedUser().then(user => console.debug(`Current authenticated user: ${JSON.stringify(user)}`))
         this.positionHandler = navigator.geolocation.watchPosition(this.positionChanged, error => {
             console.error('Cannot get position: ' + error.code + " : " + error.message);
             alert(`${error.code}: ${error.message}`);
-        });
+        }, {enableHighAccuracy: true});
 
+        const inlinedConsole = createConsole();
+        document.body.appendChild(inlinedConsole);
+        console.debug('Created inline console: ' + inlinedConsole);
+        const webcam = document.querySelector('#streamingWebcam');
+        webcam ? webcam.addEventListener('dblclick', event => this.showHideConsole())
+            : console.warn('Webcam element not found. Inline console cannot be attached.');
     }
 
     componentWillUnmount() {
@@ -88,6 +105,9 @@ export default class WebcamCapture extends React.Component {
                     console.debug("Image without EXIF");
                     this.frameBuffer.addFrame(image);
                 }
+            } else {
+                console.debug("Image without EXIF");
+                this.frameBuffer.addFrame(image);
             }
             if (this.frameBuffer.getSize() >= this.frameBuffer.bufferSize) {
                 let fragment = this.frameBuffer.getData();
@@ -131,6 +151,8 @@ export default class WebcamCapture extends React.Component {
     showHideConsole() {
         this.setState((prevState, props) => {
             let inlinedConsole = document.getElementById('consoleWrapper');
+            console.debug('Inlined console: ' + inlinedConsole);
+
             if (prevState.inlineConsoleVisible) {
                 inlinedConsole.setAttribute('hidden', 'true');
             } else {
@@ -156,11 +178,11 @@ export default class WebcamCapture extends React.Component {
                 direction="column"
                 justify="flex-start"
                 alignItems="center">
-                <Grid item xs={12}>
-                    <Button variant='outlined' color='primary' size='small' onClick={this.showHideConsole}>
-                        Console
-                    </Button>
-                </Grid>
+                {/*<Grid item xs={12}>*/}
+                {/*    <Button variant='outlined' color='primary' size='small' onClick={this.showHideConsole}>*/}
+                {/*        Console*/}
+                {/*    </Button>*/}
+                {/*</Grid>*/}
                 <Grid item xs={12}>
                     <Webcam className={classes.cameraPreview} id='streamingWebcam'
                             audio={false}
