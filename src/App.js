@@ -5,15 +5,10 @@ import {withStyles} from '@material-ui/core/styles';
 import WebcamCapture from "./WebcamCapture";
 const useStyles = theme => ({
     root: {
-        flexGrow: 1,
-        // display: "flex",
-        // "justify-content": "center",
-        // "align-items": "center"
-    },
+
+        },
     cameraPreview: {
-        width: "70%",
-        height: "70%",
-        paddingLeft: 111
+
     }
 });
 

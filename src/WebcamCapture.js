@@ -23,13 +23,18 @@ export default class WebcamCapture extends React.Component {
             },
             streamStarted: false,
             exifWithGpsCoords: null,
-            inlineConsoleVisible: false
+            inlineConsoleVisible: false,
+            dimension: {
+                windowWidth: null,
+                windowHeight: null
+            }
         };
         this.switchFacingMode = this.switchFacingMode.bind(this);
         this.startStopStream = this.startStopStream.bind(this);
         this.positionChanged = this.positionChanged.bind(this);
         this.showHideConsole = this.showHideConsole.bind(this);
         this.takeSnapshot = this.takeSnapshot.bind(this);
+        this.updateDimension = this.updateDimension.bind(this);
 
         this.webcamRef = React.createRef();
     };
@@ -65,12 +70,26 @@ export default class WebcamCapture extends React.Component {
         const webcam = document.querySelector('#streamingWebcam');
         webcam ? webcam.addEventListener('dblclick', event => this.showHideConsole())
             : console.warn('Webcam element not found. Inline console cannot be attached.');
+
+        this.updateDimension();
+        window.addEventListener('resize', this.updateDimension);
     }
 
     componentWillUnmount() {
         clearInterval(this.timerId);
         navigator.geolocation.clearWatch(this.positionHandler);
+        window.removeEventListener('resize', this.updateDimension);
     }
+
+    updateDimension() {
+        console.debug(`Set window dimension to: ${window.innerWidth}x${window.innerHeight}`);
+        this.setState((prevState, props) => {
+            return {dimension: {
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight
+            }};
+        });
+    };
 
     positionChanged(pos) {
         console.debug('Position changed: ' + pos);
@@ -178,17 +197,14 @@ export default class WebcamCapture extends React.Component {
                 direction="column"
                 justify="flex-start"
                 alignItems="center">
-                {/*<Grid item xs={12}>*/}
-                {/*    <Button variant='outlined' color='primary' size='small' onClick={this.showHideConsole}>*/}
-                {/*        Console*/}
-                {/*    </Button>*/}
-                {/*</Grid>*/}
                 <Grid item xs={12}>
                     <Webcam className={classes.cameraPreview} id='streamingWebcam'
                             audio={false}
                             ref={this.webcamRef}
                             imageSmoothing = 'false'
-                            videoConstraints={this.videoConstraints} screenshotFormat='image/jpeg'/>
+                            videoConstraints={this.videoConstraints} screenshotFormat='image/jpeg'
+                            width={this.state.dimension.windowWidth}
+                            height={this.state.dimension.windowHeight - 100}/>
 
                     {this.state.streamStarted ? <LinearProgress variant="indeterminate" color="secondary"/> : <div/>}
                 </Grid>
