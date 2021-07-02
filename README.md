@@ -1,3 +1,7 @@
+## Application Architecture
+
+![Traffic Guard Design](https://github.com/cobalt12345/traffic-guard-stream-producer/blob/d161fcbd2567cb9e1941576d7489ac7ecc13a9a5/src/main/resources/Traffic%20Guard%20Architecture.png)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
