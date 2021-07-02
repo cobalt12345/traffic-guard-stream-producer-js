@@ -1,5 +1,5 @@
 import React from "react";
-import {API, Auth} from "aws-amplify";
+import {API} from "aws-amplify";
 import piexif from "piexifjs";
 import {Button, Grid, LinearProgress} from "@material-ui/core";
 import Webcam from "react-webcam";
@@ -9,8 +9,8 @@ import {createConsole} from "./inlineConsole";
 export default class WebcamCapture extends React.Component {
 
     videoConstraints = {
-        width: 640,
-        height: 480,
+        width: 1280,
+        height: 720,
     };
 
     constructor(props) {
@@ -71,7 +71,13 @@ export default class WebcamCapture extends React.Component {
         webcam ? webcam.addEventListener('dblclick', event => this.showHideConsole())
             : console.warn('Webcam element not found. Inline console cannot be attached.');
 
-        this.updateDimension();
+        //this.updateDimension();
+        this.setState((prevState, props) => {
+            return {dimension: {
+                    windowWidth: window.innerWidth,
+                    windowHeight: window.innerHeight
+                }};
+        });
         window.addEventListener('resize', this.updateDimension);
     }
 
@@ -85,8 +91,8 @@ export default class WebcamCapture extends React.Component {
         console.debug(`Set window dimension to: ${window.innerWidth}x${window.innerHeight}`);
         this.setState((prevState, props) => {
             return {dimension: {
-                windowWidth: window.innerWidth,
-                windowHeight: window.innerHeight
+                windowWidth: window.outerWidth,
+                windowHeight: window.outerHeight
             }};
         });
     };
@@ -193,30 +199,42 @@ export default class WebcamCapture extends React.Component {
             <Grid
                 className={classes.root}
                 container
-                spacing={3}
+                spacing={1}
                 direction="column"
-                justify="flex-start"
-                alignItems="center">
+                justify="center"
+            >
                 <Grid item xs={12}>
-                    <Webcam className={classes.cameraPreview} id='streamingWebcam'
-                            audio={false}
-                            ref={this.webcamRef}
-                            imageSmoothing = 'false'
-                            videoConstraints={this.videoConstraints} screenshotFormat='image/jpeg'
-                            width={this.state.dimension.windowWidth}
-                            height={this.state.dimension.windowHeight - 100}/>
-
-                    {this.state.streamStarted ? <LinearProgress variant="indeterminate" color="secondary"/> : <div/>}
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Grid container>
-                        <Button variant="contained" color="secondary" onClick={this.startStopStream}>
-                            {(() => {return this.state.streamStarted ? 'Stop Streaming' : 'Start Streaming';})()}
-                        </Button>
-                        <AmplifySignOut/>
+                    <Grid container direction="column">
+                        <Grid item >
+                            <Webcam className={classes.cameraPreview} id='streamingWebcam'
+                                    audio={false}
+                                    ref={this.webcamRef}
+                                    imageSmoothing='false'
+                                    videoConstraints={this.videoConstraints} screenshotFormat='image/jpeg'
+                                // width={this.state.dimension.windowWidth - 50}
+                                height={this.state.dimension.windowHeight - 100}
+                            />
+                        </Grid>
+                        <Grid item >
+                            {this.state.streamStarted ? <LinearProgress variant="indeterminate" color="secondary"/> : <div/>}
+                        </Grid>
                     </Grid>
                 </Grid>
+                <Grid item xs={12}>
+                    <Grid container direction="row" justify="center">
+                        <Grid item xs={6} alignItems="flex-start">
+                            <Button variant="contained" color="secondary" onClick={this.startStopStream}>
+                                {(() => {
+                                    return this.state.streamStarted ? 'Stop Streaming' : 'Start Streaming';
+                                })()}
+                            </Button>
+                        </Grid>
+                        <Grid item xs={6} alignItems="flex-start">
+                            <AmplifySignOut/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
             </Grid>);
     }
 

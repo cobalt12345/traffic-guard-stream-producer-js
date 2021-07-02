@@ -3,12 +3,15 @@ import Amplify, {Auth} from 'aws-amplify';
 import awsconfig from './aws-exports';
 import {withStyles} from '@material-ui/core/styles';
 import WebcamCapture from "./WebcamCapture";
+
 const useStyles = theme => ({
     root: {
 
         },
     cameraPreview: {
 
+    },
+    videoContainer: {
     }
 });
 
