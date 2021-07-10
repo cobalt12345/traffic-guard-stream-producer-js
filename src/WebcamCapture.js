@@ -176,7 +176,6 @@ export default class WebcamCapture extends React.Component {
     showHideConsole() {
         this.setState((prevState, props) => {
             let inlinedConsole = document.getElementById('consoleWrapper');
-            console.debug('Inlined console: ' + inlinedConsole);
 
             if (prevState.inlineConsoleVisible) {
                 inlinedConsole.setAttribute('hidden', 'true');
