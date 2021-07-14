@@ -8,10 +8,22 @@ import {createConsole} from "./inlineConsole";
 
 export default class WebcamCapture extends React.Component {
 
+    width = 1280;
+    height = 720;
+
     videoConstraints = {
-        width: 1280,
-        height: 720,
-    };
+        width: {
+            min: this.width
+        },
+        height: {
+            min: this.height
+        },
+        facingMode:  'environment',
+        resizeMode: 'none',
+        screenshotQuality: 1,
+        imageSmoothing: false,
+        audio: false,
+    }
 
     constructor(props) {
         super(props);
@@ -35,7 +47,6 @@ export default class WebcamCapture extends React.Component {
         this.showHideConsole = this.showHideConsole.bind(this);
         this.takeSnapshot = this.takeSnapshot.bind(this);
         this.updateDimension = this.updateDimension.bind(this);
-
         this.webcamRef = React.createRef();
     };
 
@@ -119,10 +130,9 @@ export default class WebcamCapture extends React.Component {
 
     takeSnapshot() {
         if (this.state.streamStarted) {
-            let image = this.webcamRef.current.getScreenshot(this.videoConstraints);
+            let image = this.webcamRef.current.getScreenshot({width: this.width, height: this.height});
             if (null != this.state.exifWithGpsCoords) {
                 let imageExtendedWithExif = piexif.insert(this.state.exifWithGpsCoords, image);
-                console.debug('Image with exif: ' + imageExtendedWithExif);
                 if (imageExtendedWithExif) {
                     console.debug("Image with EXIF");
                     this.frameBuffer.addFrame(imageExtendedWithExif);
@@ -188,10 +198,10 @@ export default class WebcamCapture extends React.Component {
 
     render() {
 
-        const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
-        if (supportedConstraints['facingMode']) {
-            this.videoConstraints['facingMode'] = 'environment';
-        }
+        // const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+        // if (supportedConstraints['facingMode']) {
+        //     this.videoConstraints['facingMode'] = 'environment';
+        // }
         const {classes} = this.props;
 
         return (
