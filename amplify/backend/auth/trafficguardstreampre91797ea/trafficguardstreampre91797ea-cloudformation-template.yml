@@ -1,3 +1,4 @@
+
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
@@ -11,6 +12,14 @@ Parameters:
   
 
     
+  identityPoolName:
+    Type: String
+  
+            
+  
+  allowUnauthenticatedIdentities:
+    Type: String
+            
   resourceNameTruncated:
     Type: String
   
@@ -63,14 +72,18 @@ Parameters:
   requiredAttributes:
     Type: CommaDelimitedList
       
+        
+  aliasAttributes:
+    Type: CommaDelimitedList
+      
   
   userpoolClientGenerateSecret:
     Type: String
             
+    
   userpoolClientRefreshTokenValidity:
-    Type: String
-  
-            
+    Type: Number
+          
         
   userpoolClientWriteAttributes:
     Type: CommaDelimitedList
@@ -105,51 +118,11 @@ Parameters:
     Type: String
   
             
-        
-  userPoolGroupList:
-    Type: CommaDelimitedList
-      
-  serviceName:
-    Type: String
-  
-            
-  
-  usernameCaseSensitive:
-    Type: String
-            
-        
-  dependsOn:
-    Type: CommaDelimitedList
-      
-  
-  userPoolGroups:
-    Type: String
-            
-  
-  adminQueries:
-    Type: String
-            
-  triggers:
-    Type: String
-  
-            
   
   hostedUI:
     Type: String
             
-      
-  parentStack:
-    Type: String
-        
-  
-  breakCircularDependency:
-    Type: String
-            
-        
-  permissions:
-    Type: CommaDelimitedList
-      
-  hostedUIProviderCreds:
+  triggers:
     Type: String
   
             
@@ -165,15 +138,43 @@ Parameters:
     Type: String
   
             
+        
+  userPoolGroupList:
+    Type: CommaDelimitedList
+      
+  serviceName:
+    Type: String
+  
+            
+  
+  usernameCaseSensitive:
+    Type: String
+            
+      
+  parentStack:
+    Type: String
+        
+  
+  breakCircularDependency:
+    Type: String
+            
+        
+  permissions:
+    Type: CommaDelimitedList
+      
+        
+  dependsOn:
+    Type: CommaDelimitedList
+      
+  hostedUIProviderCreds:
+    Type: String
+  
+            
   oAuthMetadata:
     Type: String
   
             
             
-        
-  authProviders:
-    Type: CommaDelimitedList
-      
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
   
@@ -188,7 +189,7 @@ Resources:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'tgstreee3d458f_sns-role', !Join ['',[ 'sns', 'ee3d458f', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'traffie91797ea_sns-role', !Join ['',[ 'sns', 'e91797ea', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -200,10 +201,10 @@ Resources:
               - "sts:AssumeRole"
             Condition:
               StringEquals:
-                sts:ExternalId: tgstreee3d458f_role_external_id
+                sts:ExternalId: traffie91797ea_role_external_id
       Policies:
         -
-          PolicyName: tgstreee3d458f-sns-policy
+          PolicyName: traffie91797ea-sns-policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -235,7 +236,10 @@ Resources:
       
       
       
-      AutoVerifiedAttributes: !Ref autoVerifiedAttributes
+      AutoVerifiedAttributes:
+      
+        - email
+      
       
       
       EmailVerificationMessage: !Ref emailVerificationMessage
@@ -244,17 +248,20 @@ Resources:
       Policies:
         PasswordPolicy:
           MinimumLength: !Ref passwordPolicyMinLength
-          RequireLowercase: true
-          RequireNumbers: true
+          RequireLowercase: false
+          RequireNumbers: false
           RequireSymbols: false
-          RequireUppercase: true
+          RequireUppercase: false
+      
+      
+      AliasAttributes: !Ref aliasAttributes
       
       MfaConfiguration: !Ref mfaConfiguration
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsAuthenticationMessage: !Ref smsAuthenticationMessage
       SmsConfiguration:
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: tgstreee3d458f_role_external_id
+        ExternalId: traffie91797ea_role_external_id
     
   
   UserPoolClientWeb:
@@ -262,10 +269,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: tgstreee3d458f_app_clientWeb
-      
-      ReadAttributes: !Ref userpoolClientReadAttributes
-      WriteAttributes: !Ref userpoolClientWriteAttributes
+      ClientName: traffie91797ea_app_clientWeb
       
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -275,10 +279,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: tgstreee3d458f_app_client
-      
-      ReadAttributes: !Ref userpoolClientReadAttributes
-      WriteAttributes: !Ref userpoolClientWriteAttributes
+      ClientName: traffie91797ea_app_client
       
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -289,7 +290,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', 'ee3d458f', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', 'e91797ea', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -332,7 +333,7 @@ Resources:
             - '};'
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
@@ -343,7 +344,7 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: tgstreee3d458f_userpoolclient_lambda_iam_policy
+      PolicyName: traffie91797ea_userpoolclient_lambda_iam_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -360,7 +361,7 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: tgstreee3d458f_userpoolclient_lambda_log_policy
+      PolicyName: traffie91797ea_userpoolclient_lambda_log_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -458,7 +459,7 @@ Resources:
 
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
@@ -539,24 +540,44 @@ Resources:
             - '   let providerCredsIndex = hostedUIProviderCreds.findIndex((provider) => provider.ProviderName === providerName);'
             - '   let providerCreds = hostedUIProviderCreds[providerCredsIndex];'
             - '   let requestParams = {'
-            - '    ProviderDetails: {'
-            - '     ''client_id'': providerCreds.client_id,'
-            - '     ''client_secret'': providerCreds.client_secret,'
-            - '     ''authorize_scopes'': providerMeta.authorize_scopes'
-            - '    },'
             - '    ProviderName: providerMeta.ProviderName,'
             - '    UserPoolId: userPoolId,'
-            - '    AttributeMapping: providerMeta.AttributeMapping'
+            - '    AttributeMapping: providerMeta.AttributeMapping,'
             - '   };'
+            - '   if (providerMeta.ProviderName === ''SignInWithApple'') {'
+            - '     if (providerCreds.client_id && providerCreds.team_id && providerCreds.key_id && providerCreds.private_key) {'
+            - '      requestParams.ProviderDetails = {'
+            - '       ''client_id'': providerCreds.client_id,'
+            - '       ''team_id'': providerCreds.team_id,'
+            - '       ''key_id'': providerCreds.key_id,'
+            - '       ''private_key'': providerCreds.private_key,'
+            - '       ''authorize_scopes'': providerMeta.authorize_scopes,'
+            - '      };'
+            - '     } else {'
+            - '       requestParams = null;'
+            - '     }'
+            - '   } else {'
+            - '    requestParams.ProviderDetails = {'
+            - '     ''client_id'': providerCreds.client_id,'
+            - '     ''client_secret'': providerCreds.client_secret,'
+            - '     ''authorize_scopes'': providerMeta.authorize_scopes,'
+            - '    };'
+            - '   }'
             - '   return requestParams;'
             - '  };'
             - '  let createIdentityProvider = (providerName) => {'
             - '   let requestParams = getRequestParams(providerName);'
+            - '   if (!requestParams) {'
+            - '     return Promise.resolve();'
+            - '   }'
             - '   requestParams.ProviderType = requestParams.ProviderName;'
             - '   return identity.createIdentityProvider(requestParams).promise();'
             - '  };'
             - '  let updateIdentityProvider = (providerName) => {'
             - '   let requestParams = getRequestParams(providerName);'
+            - '   if (!requestParams) {'
+            - '     return Promise.resolve();'
+            - '   }'
             - '   return identity.updateIdentityProvider(requestParams).promise();'
             - '  };'
             - '  let deleteIdentityProvider = (providerName) => {'
@@ -590,7 +611,7 @@ Resources:
 
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
@@ -689,7 +710,7 @@ Resources:
 
       Handler: index.handler
       Runtime: nodejs12.x
-      Timeout: '300'
+      Timeout: 300
       Role: !GetAtt
         - UserPoolClientRole
         - Arn
@@ -743,8 +764,50 @@ Resources:
 
   
     
+  # BEGIN IDENTITY POOL RESOURCES
+  
+
+  IdentityPool:
+  # Always created
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'trafficguardstreampre91797ea_identitypool_e91797ea', !Join ['',['trafficguardstreampre91797ea_identitypool_e91797ea', '__', !Ref env]]]
+      
+      CognitoIdentityProviders:
+        - ClientId:  !Ref UserPoolClient
+          ProviderName: !Sub
+            - cognito-idp.${region}.amazonaws.com/${client}
+            - { region: !Ref "AWS::Region",  client: !Ref UserPool}
+        - ClientId:  !Ref UserPoolClientWeb
+          ProviderName: !Sub
+            - cognito-idp.${region}.amazonaws.com/${client}
+            - { region: !Ref "AWS::Region",  client: !Ref UserPool}
+            
+      AllowUnauthenticatedIdentities: !Ref allowUnauthenticatedIdentities
+      
+    
+    DependsOn: UserPoolClientInputs
+    
+
+  IdentityPoolRoleMap:
+  # Created to map Auth and Unauth roles to the identity pool
+  # Depends on Identity Pool for ID ref
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+          unauthenticated: !Ref unauthRoleArn
+          authenticated: !Ref authRoleArn
+    DependsOn: IdentityPool
+  
 
 Outputs :
+  
+  IdentityPoolId:
+    Value: !Ref 'IdentityPool'
+    Description:  Id for the identity pool
+  IdentityPoolName:
+    Value: !GetAtt IdentityPool.Name
   
   
   HostedUIDomain:
@@ -772,6 +835,7 @@ Outputs :
   AppClientSecret:
     Value: !GetAtt UserPoolClientInputs.appSecret
     Condition: ShouldOutputAppClientSecrets
+  
   
   
   

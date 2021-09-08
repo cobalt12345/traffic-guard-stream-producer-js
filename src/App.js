@@ -17,7 +17,8 @@ const useStyles = theme => ({
 
 export const TARGET_FPS = 5;
 export const FRAGMENT_DURATION_IN_FRAMES = 1 * TARGET_FPS;
-const DATA_ENDPOINT = 'https://joqolrfd76.execute-api.eu-central-1.amazonaws.com/Stage';
+
+const DATA_ENDPOINT = 'https://dfonkqc3hf.execute-api.eu-central-1.amazonaws.com/Stage';
 
 Amplify.configure({
     ...awsconfig,

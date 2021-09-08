@@ -34,7 +34,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-#amplify
+#amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
 amplify/logs
@@ -53,7 +53,4 @@ amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
-.gradle/
-gradle/
-gradlew
-gradlew.bat
+#amplify-do-not-edit-end
