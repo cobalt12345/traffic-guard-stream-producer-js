@@ -1,74 +1,27 @@
+# Whole application description
+Current application analyzes video either from Java producer application or from web application client. It recognizes Russian car
+license plate numbers and stores them to the Dynamo DB.<br/>
+
+It also provides a simple portal to get recognition results.
+
+Application requires signing up via setting up a new account or via your Google account.
+
 ## Application Architecture
 
 ![Traffic Guard Design](https://github.com/cobalt12345/traffic-guard-stream-producer/blob/d161fcbd2567cb9e1941576d7489ac7ecc13a9a5/src/main/resources/Traffic%20Guard%20Architecture.png)
 
-# Getting Started with Create React App
+## See how it works
+<ul>
+    <li>Streaming web application - <a href="https://www.dashcam.talochk.in/">https://www.dashcam.talochk.in</a></li>
+    <li>Portal exposing results - <a href="https://www.cars.talochk.in/">https://www.cars.talochk.in/</a></li>
+</ul>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Application component repositories
+<ol>
+    <li>Web portal application (Amplify/ReactJS) - <a href="https://github.com/cobalt12345/traffic-guard-portal">https://github.com/cobalt12345/traffic-guard-portal</a></li>
+    <li>Streaming web application (Amplify/ReactJS) - <a href="https://github.com/cobalt12345/traffic-guard-stream-producer-js">https://github.com/cobalt12345/traffic-guard-stream-producer-js</a></li>
+    <li>Standalone streaming application (Java/Spring) - <a href="https://github.com/cobalt12345/traffic-guard-stream-producer">https://github.com/cobalt12345/traffic-guard-stream-producer</a> </li>
+    <li>Lambda function (Java) which handles JPEG images received via API Gateway from streaming application. It converts them to the MKV format and sends to the Kinesis Vide Stream (KVS) - <a href="https://github.com/cobalt12345/traffic-guard-webcam-snaps-to-kvs">https://github.com/cobalt12345/traffic-guard-webcam-snaps-to-kvs</a></li>
+    <li>Component (Java/Spring/ECS) which consumes each N-th frame from KVS and stores it to S3 bucket. Deployed as a task to ECS - <a href="https://github.com/cobalt12345/traffic-guard-stream-consumer">https://github.com/cobalt12345/traffic-guard-stream-consumer</a></li>
+    <li>Lambda function (Java) is triggered when new object appears in S3 bucket. It tries to recognize a plate number and store it to the Dynamo DB - <a href="https://github.com/cobalt12345/traffic-guard-car-license-plates-recognizer">https://github.com/cobalt12345/traffic-guard-car-license-plates-recognizer</a></li>
+</ol>
